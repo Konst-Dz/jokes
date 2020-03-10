@@ -1,5 +1,5 @@
 <?php
-
+/*
 include 'elems/link.php';
 
 
@@ -109,6 +109,7 @@ include 'elems/layout.php';
 
 
 
-?>
+*/?><!--
 
 
+-->

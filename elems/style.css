@@ -1,0 +1,15 @@
+.success{
+    color: green;
+}
+.error{
+    color: red;
+}
+.pages{
+    text-align: center;
+}
+.pages a{
+    color:red;
+    text-decoration: none;
+    margin: 10px;
+
+}

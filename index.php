@@ -1,39 +1,23 @@
 <?php
-/*
+//Коннект к БД.
 include 'elems/link.php';
 
-
+//список категорий.
 $list = '';
-$list .= "<form action=\"\" method=\"GET\">
-  <select name=\"list\">";
-
 $query = "SELECT * FROM category";
 $result = mysqli_query($connect,$query) or die(mysqli_error($connect));
 for($data = [];$row = mysqli_fetch_assoc($result);$data[] = $row);
 
-$list.= "<option value=\"\">Все</option>";
+$list .= "<ul class=\"list\"><li><a href=\"/\">Все анекдоты</a></li>";
+
 foreach ($data as $datum) {
-
-   $list.= "<option value=\"{$datum['id']}\">{$datum['category']}</option> ";
-
+    $list .= "<li><a href=\"?list={$datum['id']}\">{$datum['category']}</a></li>";
    }
 
-$list .= "</select><input type=\"submit\" value=\"Выбрать\"><br></form>";
+$list .= "</ul>";
 
 
-
-
-if(isset($_GET['page']) and is_numeric($_GET['page'])){
-    $page = $_GET['page'];
-}
-else{
-    $page = 1;
-}
-
-if($_GET['list']){
-
-}
-
+//Форма для отправления анекдотов от пользователей
 $form = '';
 $form .= "<form action=\"\" method=\"POST\">
     <p>Ваш логин <br><input type=\"text\" name=\"login\"> </p>
@@ -43,10 +27,9 @@ $form .= "<form action=\"\" method=\"POST\">
 $query = "SELECT * FROM category";
 $result = mysqli_query($connect,$query) or die(mysqli_error($connect));
 for($data = [];$row = mysqli_fetch_assoc($result);$data[] = $row);
+
 foreach ($data as $datum) {
-
    $form .= "<option value=\"{$datum['id']}\">{$datum['category']}</option>";
-
    }
 
    $form .= " </select><br><br><p>Ваш анекдот</p>
@@ -55,8 +38,7 @@ foreach ($data as $datum) {
 </form> 
 ";
 
-
-
+//Добавление анекдотов в БД.
 if(!empty($_POST['login']) and !empty($_POST['joke'])) {
     $joke = $_POST['joke'];
     $login =$_POST['login'];
@@ -81,35 +63,66 @@ if(!empty($_POST['login']) and !empty($_POST['joke'])) {
  id_user = '$id_user' , date = NOW() , status = 0 ";
     mysqli_query($connect,$query) or die(mysqli_error($connect)) ;
 
-
+    //flash
+    $_SESSION['message'] = ['text' => 'Successfully.This joke will be send to admin',
+        'status' => 'success'];
 }
 
-function content($connect,$category){
-    $notes = 2;
-    $from = ($page-1) * $notes;
 
-    $query = "SELECT * FROM joke LEFT JOIN category ON joke.id_category = category.id LEFT JOIN 
-user ON joke.id_user = user.id WHERE status = 1 and category = '$category' ORDER BY date LIMIT $from,$notes";
+//Пагинация
+if(isset($_GET['page']) and is_numeric($_GET['page'])){
+    $page = $_GET['page'];
+}
+else{
+    $page = 1;
+}
+//Кол-во записей на странице
+$howMany = 2;
+//Вывод ссылок на страницу
+function pagination($howMany,$connect){
+//Получение кол-ва анекдотов из БД
+    $query = "SELECT COUNT(*) as count FROM joke WHERE status = 1 ";
+    $result = mysqli_query($connect, $query) or die(mysqli_error($connect));
+    $rows = mysqli_fetch_assoc($result)['count'];
+//вычисление колв страниц
+    $pages = ceil($rows / $howMany);
+
+    echo "<div class=\"pages\">";
+    echo "<a class=\"$disabled\"></a>"
+    for ($i = 1; $i <= $pages; $i++) {
+        echo "<a href=\"?page=$i\">$i</a>";
+    }
+    echo "</div>";
+}
+
+//Функция.Вывод анекдотов на страницу с пагинацией.
+$category = $_GET['list'];
+function content($connect,$page,$category = '',$howMany){
+    $from = ($page-1) * $howMany;
+
+    if($category) {
+        $query = "SELECT * FROM joke LEFT JOIN category ON joke.id_category = category.id LEFT JOIN 
+user ON joke.id_user = user.id WHERE status = 1 AND category.id = '$category' ORDER BY date LIMIT $from,$howMany";
+    }
+    else{
+        $query = "SELECT * FROM joke LEFT JOIN category ON joke.id_category = category.id LEFT JOIN 
+user ON joke.id_user = user.id WHERE status = 1 ORDER BY date LIMIT $from,$howMany";
+    }
     $result = mysqli_query($connect,$query) or die(mysqli_error($connect)) ;
     for($data = [];$row = mysqli_fetch_assoc($result);$data[]=$row );
 
     $content='';
     foreach ( $data as $item) {
 
-        $content .= "<p>{$item['text']}</p>";
-        $content .= "<span>Категория : {$item['category']}</span><br>";
-        $content .= "<span>Прислал : {$item['login']}</span>";
-        $content .= "<hr><br>";
+        echo "<p>{$item['text']}</p>";
+        echo "<span>Категория : {$item['category']}</span><br>";
+        echo "<span>Прислал : {$item['login']}</span>";
+        echo "<hr><br>";
 
     }
-    return $content;
+    pagination($howMany,$connect);
 }
-
+//Флеш сообщение
+include 'elems/info.php';
 include 'elems/layout.php';
 
-
-
-*/?><!--
-
-
--->

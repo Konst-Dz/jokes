@@ -14,9 +14,9 @@ for($data = [];$row = mysqli_fetch_assoc($result);$data[] = $row);
 $list.= "<option value=\"\">Все</option>";
 foreach ($data as $datum) {
 
-   $list.= "<option value=\"{$datum['id']}\">{$datum['category']}</option> ";
+    $list.= "<option value=\"{$datum['id']}\">{$datum['category']}</option> ";
 
-   }
+}
 
 $list .= "</select><input type=\"submit\" value=\"Выбрать\"><br></form>";
 
@@ -45,11 +45,11 @@ $result = mysqli_query($connect,$query) or die(mysqli_error($connect));
 for($data = [];$row = mysqli_fetch_assoc($result);$data[] = $row);
 foreach ($data as $datum) {
 
-   $form .= "<option value=\"{$datum['id']}\">{$datum['category']}</option>";
+    $form .= "<option value=\"{$datum['id']}\">{$datum['category']}</option>";
 
-   }
+}
 
-   $form .= " </select><br><br><p>Ваш анекдот</p>
+$form .= " </select><br><br><p>Ваш анекдот</p>
     <textarea  cols=\"30\" rows=\"10\" name=\"joke\"></textarea><br>
     <input type=\"submit\">
 </form> 
@@ -66,15 +66,15 @@ if(!empty($_POST['login']) and !empty($_POST['joke'])) {
     $result = mysqli_query($connect,$query) or die(mysqli_error($connect)) ;
     $user = mysqli_fetch_assoc($result);
 
-         if(!$user){
+    if(!$user){
 
-             $query = "INSERT INTO user SET login = '$login' ";
-             mysqli_query($connect,$query) or die(mysqli_error($connect));
+        $query = "INSERT INTO user SET login = '$login' ";
+        mysqli_query($connect,$query) or die(mysqli_error($connect));
 
-             $query = "SELECT id FROM user WHERE login = '$login'";
-             $result = mysqli_query($connect,$query) or die(mysqli_error($connect)) ;
-             $user = mysqli_fetch_assoc($result);
-           }
+        $query = "SELECT id FROM user WHERE login = '$login'";
+        $result = mysqli_query($connect,$query) or die(mysqli_error($connect)) ;
+        $user = mysqli_fetch_assoc($result);
+    }
     $id_user = $user['id'];
 
     $query = "INSERT INTO joke SET text = '$joke', id_category = '$id_category' ,
@@ -111,7 +111,6 @@ include 'elems/layout.php';
 
 
 
-
 ?>
 
-
+<form action="" method="get"></form>

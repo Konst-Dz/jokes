@@ -79,7 +79,7 @@ else{
 //Кол-во записей на странице
 $howMany = 2;
 //Вывод ссылок на страницу
-function pagination($howMany,$connect){
+function pagination($howMany,$connect,$page){
 //Получение кол-ва анекдотов из БД
     $query = "SELECT COUNT(*) as count FROM joke WHERE status = 1 ";
     $result = mysqli_query($connect, $query) or die(mysqli_error($connect));
@@ -87,16 +87,42 @@ function pagination($howMany,$connect){
 //вычисление колв страниц
     $pages = ceil($rows / $howMany);
 
-    echo "<div class=\"pages\">";
-    echo "<a class=\"$disabled\"></a>"
-    for ($i = 1; $i <= $pages; $i++) {
-        echo "<a href=\"?page=$i\">$i</a>";
+    $prev = $page-1;
+    $next = $page+1;
+    $pagination ='';
+    $pagination .= "<div class=\"pages\">";
+    //нерабочая ссылка
+    if($page != 1){
+        $disabled = '';
     }
-    echo "</div>";
+    else{
+        $disabled = 'disabled';
+    }
+    $pagination .= "<a href=\"?page=$prev\" class=\" $disabled prev\" $disabled>Назад</a>";
+    for ($i = 1; $i <= $pages; $i++) {
+        //текущая страница
+        if($i == $page){
+            $active = 'active';
+        }
+        else{
+            $active = "";
+        }
+        //вывод ссылок
+        $pagination .= "<a class=\"$active\" href=\"?page=$i\">$i</a>";
+    }
+    if($page == $pages){
+        $dis = 'disabled';
+    }
+    else{
+        $dis = '';
+    }
+    $pagination .= "<a href=\"?page=$next\" class=\"$dis prev\">Вперед</a>";
+    $pagination .= "</div>";
+    return $pagination;
 }
 
 //Функция.Вывод анекдотов на страницу с пагинацией.
-$category = $_GET['list'];
+$category = $_GET['list'] ?? '' ;
 function content($connect,$page,$category = '',$howMany){
     $from = ($page-1) * $howMany;
 
@@ -114,15 +140,17 @@ user ON joke.id_user = user.id WHERE status = 1 ORDER BY date LIMIT $from,$howMa
     $content='';
     foreach ( $data as $item) {
 
-        echo "<p>{$item['text']}</p>";
-        echo "<span>Категория : {$item['category']}</span><br>";
-        echo "<span>Прислал : {$item['login']}</span>";
-        echo "<hr><br>";
+        $content .= "<p>{$item['text']}</p>";
+        $content .= "<span>Категория : {$item['category']}</span><br>";
+        $content .= "<span>Прислал : {$item['login']}</span>";
+        $content .= "<hr><br>";
 
     }
-    pagination($howMany,$connect);
+    $content .= pagination($howMany,$connect,$page);
+    return $content;
 }
-//Флеш сообщение
-include 'elems/info.php';
+
+$content = content($connect,$page,$category,$howMany);
+
 include 'elems/layout.php';
 

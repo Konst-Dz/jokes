@@ -13,3 +13,12 @@
     margin: 10px;
 
 }
+.disabled{
+    display: none;
+}
+div.pages .active{
+    text-decoration: underline;
+}
+div.pages .prev{
+    color: #648cff;
+}

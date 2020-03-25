@@ -8,9 +8,11 @@
 
         echo "Добрый день, {$user['login']} ({$user['name']})<br>";
         echo "<a href=\"../pages/logout.php\">Выйти</a><br>";
+        echo "<a href=\"../pages/form.php\">Добавить анекдот</a><br>";
+
 
         if($_SESSION['auth'] and $_SESSION['status'] == 2){
-            echo "<a href=\"../admin/index.php\">Admin Page</a><br>";
+            echo "<a href=\"/../admin/index.php\">Admin Page</a><br>";
         }
 
     }
@@ -18,4 +20,4 @@
         echo  "<a href=\"../pages/login.php\">Login</a>";
         echo  "<a href=\"../pages/registration.php\">Registration</a>";
     }
-    echo "<hr>";
+
